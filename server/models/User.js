@@ -66,7 +66,7 @@ userSchema.statics.getAllUsers = async function () {
 
 userSchema.statics.deleteUserById = async function (id) {
   try {
-    const result = await this.remove({ _id: id });
+    const result = await this.deleteOne({ _id: id });
     return result;
   } catch (error) {
     throw error;
