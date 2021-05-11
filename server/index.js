@@ -14,6 +14,10 @@ import { decode } from "./middlewares/jwt.js";
 //mongo connection
 import "./config/mongo.js";
 
+//socket config
+import socketio from "socket.io";
+import WebSocket from "./utils/WebSocket.js";
+
 const app = express();
 
 //Get port and assign it to express
@@ -28,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 // set up our routes
 app.use("/", indexRouter);
 app.use("/users", userRouter);
-app.use("/room", chatRoomRouter);
+app.use("/room", decode, chatRoomRouter);
 app.use("/delete", deleteRouter);
 
 //any 404 to be caught and forwarded to error handler
@@ -41,6 +45,10 @@ app.use("*", (req, res) => {
 
 //Create our HTTP server
 const server = http.createServer(app);
+
+//Create socket connection
+global.io = socketio.listen(server); //assign global.io(window object in browser if we talked about frontend) to socketio, ports should start listening on the server listening for events
+global.io.on("connection", WebSocket.connection);
 
 //listen in port
 server.listen(port);
